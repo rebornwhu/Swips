@@ -18,43 +18,64 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let upGesture = UISwipeGestureRecognizer(target: self, action: "reportVerticalSwipe:")
-        upGesture.direction = .Up
-        
-        let downGesture = UISwipeGestureRecognizer(target: self, action: "reportVerticalSwipe:")
-        downGesture.direction = .Down
-        
-        view.addGestureRecognizer(upGesture)
-        view.addGestureRecognizer(downGesture)
-        
-        let leftGesture = UISwipeGestureRecognizer(target: self, action: "reportHorizontalSwipe:")
-        leftGesture.direction = .Left
-        
-        
-        let rightGesture = UISwipeGestureRecognizer(target: self, action: "reportHorizontalSwipe:")
-        rightGesture.direction = .Right
-        
-        view.addGestureRecognizer(leftGesture)
-        view.addGestureRecognizer(rightGesture)
-    }
 
-    func reportHorizontalSwipe(recognizer: UIGestureRecognizer) {
-        label.text = "Horizontal swipe detected"
-        resetMessage()
+        for var touchCount = 1; touchCount <= 5; touchCount++ {
+            let up = UISwipeGestureRecognizer(target: self, action: "reportVerticalSwipe:")
+            up.direction = .Up
+            up.numberOfTouchesRequired = touchCount
+            view.addGestureRecognizer(up)
+            
+            let down = UISwipeGestureRecognizer(target: self, action: "reportVerticalSwipe:")
+            down.direction = .Down
+            down.numberOfTouchesRequired = touchCount
+            view.addGestureRecognizer(down)
+            
+            let left = UISwipeGestureRecognizer(target: self, action: "reportHorizontalSwipe:")
+            left.direction = .Left
+            left.numberOfTouchesRequired = touchCount
+            view.addGestureRecognizer(left)
+            
+            let right = UISwipeGestureRecognizer(target: self, action: "reportHorizontalSwipe:")
+            right.direction = .Right
+            right.numberOfTouchesRequired = touchCount
+            view.addGestureRecognizer(right)
+        }
     }
     
+    func descriptionForTouchCount(touchCount: Int) -> String {
+        switch touchCount {
+        case 1:
+            return "Single"
+        case 2:
+            return "Double"
+        case 3:
+            return "Triple"
+        case 4:
+            return "Quadruple"
+        case 5:
+            return "Quintuple"
+        default:
+            return ""
+        }
+    }
+
     func resetMessage() {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), {
             self.label.text = ""
         })
     }
     
-    func reportVerticalSwipe(recognizer: UIGestureRecognizer) {
-        label.text = "Vertical swipe detected"
+    func reportHorizontalSwipe(recognizer: UIGestureRecognizer) {
+        let count = descriptionForTouchCount(recognizer.numberOfTouches())
+        label.text = "\(count) Horizontal swipe detected"
         resetMessage()
     }
-
+    
+    func reportVerticalSwipe(recognizer: UIGestureRecognizer) {
+        let count = descriptionForTouchCount(recognizer.numberOfTouches())
+        label.text = "\(count) Vertical swipe detected"
+        resetMessage()
+    }
 
 }
 
